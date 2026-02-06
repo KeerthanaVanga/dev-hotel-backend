@@ -42,7 +42,7 @@ export const fetchUpcomingBookingsForAllUsers = async (
 
 export const getBookingByIdController = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const bookingId = BigInt(id);
     const booking = await getBookingById(bookingId);
     if (!booking) {
@@ -107,7 +107,7 @@ export const updateBookingStatusController = async (
   res: Response,
 ) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { status } = req.body;
 
     if (!status) {
@@ -139,7 +139,7 @@ export const rescheduleBookingController = async (
   res: Response,
 ) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const body = req.body;
 
     const room_id = Number(body.room_id);
