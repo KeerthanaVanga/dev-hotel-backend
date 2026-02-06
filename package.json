@@ -15,6 +15,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
+    "@types/pg": "^8.16.0",
     "axios": "^1.13.4",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.9.0",
@@ -25,7 +26,9 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.0.2",
-    "prisma": "^7.3.0"
+    "pg": "^8.18.0",
+    "prisma": "^7.3.0",
+    "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
