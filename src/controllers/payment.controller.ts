@@ -37,7 +37,7 @@ export const fetchAllUsersPayments = async (req: Request, res: Response) => {
 
 export const updatePaymentHandler = async (req: Request, res: Response) => {
   try {
-    const paymentId = BigInt(req.params.id);
+    const paymentId = BigInt(req.params.id as string);
     const { method, status, bill_paid_amount } = req.body;
 
     const data: Parameters<typeof updatePayment>[1] = {};

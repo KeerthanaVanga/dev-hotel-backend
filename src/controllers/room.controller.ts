@@ -109,7 +109,7 @@ export const updateRoom = async (req: Request, res: Response) => {
     ];
 
     // ✅ DO NOT update room_number / total_rooms
-    const updatedRoom = await updateRoomById(roomId, {
+    const updatedRoom = await updateRoomById(roomId as string, {
       room_name,
       room_type,
       price: Number(price),
