@@ -11,7 +11,7 @@ import {
   createAdmin,
   updateAdmin,
   deleteAdmin,
-} from "../controllers/auth.controller";
+} from "../controllers/auth.controller.js";
 import { requireAuth } from "../middlewares/auth.middleware.js";
 
 const router = Router();
