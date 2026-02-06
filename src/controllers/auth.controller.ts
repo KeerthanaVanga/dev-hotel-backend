@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { prisma } from "../db/prisma";
+import { prisma } from "../db/prisma.js";
 import { generateAccessToken, generateRefreshToken } from "../utils/token.js";
 import { setAuthCookies, clearAuthCookies } from "../utils/cookies.js";
 import { AuthRequest } from "../middlewares/auth.middleware.js";

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "../db/prisma";
+import { prisma } from "../db/prisma.js";
 import { serializeBigInt } from "../utils/serializeBigint.js";
 
 export const fetchWhatsappUsers = async (_req: Request, res: Response) => {
