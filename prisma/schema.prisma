@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model admin {
+  id           Int      @id @default(autoincrement())
+  username     String
+  email        String   @unique
+  password     String
+  refreshToken String?
+  createdat    DateTime @default(dbgenerated("timezone('Asia/Kolkata'::text, now())")) @db.Timestamptz(6)
+  updatedat    DateTime @default(dbgenerated("timezone('Asia/Kolkata'::text, now())")) @db.Timestamptz(6)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model bookings {
+  booking_id   BigInt     @id @default(autoincrement())
+  user_id      Int
+  room_id      Int
+  check_in     DateTime   @db.Timestamptz(6)
+  check_out    DateTime   @db.Timestamptz(6)
+  status       String     @default("pending")
+  adults       Int?
+  children     Int?       @default(0)
+  guests_total Int?       @default(dbgenerated("(adults + children)"))
+  created_at   DateTime   @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  updated_at   DateTime   @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  rooms        rooms      @relation(fields: [room_id], references: [room_id], onUpdate: NoAction)
+  users        users      @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  emails       emails[]
+  payments     payments[]
+  reviews      reviews[]
+}
+
+model email_templates {
+  id     Int     @id @default(autoincrement())
+  status String?
+  email  String?
+}
+
+model emails {
+  id            BigInt    @id @default(autoincrement())
+  user_id       Int?
+  booking_id    BigInt?
+  email_sent_to String
+  status        String?
+  created_at    DateTime  @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  updated_at    DateTime  @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  bookings      bookings? @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "booking_id")
+  users         users?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payments {
+  payment_id       BigInt   @id @default(autoincrement())
+  user_id          Int
+  booking_id       BigInt
+  method           String
+  status           String
+  currency         String   @default("INR")
+  bill_amount      Decimal  @db.Decimal(10, 2)
+  bill_paid_amount Decimal  @default(0) @db.Decimal(10, 2)
+  created_at       DateTime @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  updated_at       DateTime @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  bookings         bookings @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction)
+  users            users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model payments_webhooks {
+  id         Int    @id @default(autoincrement())
+  session_id String @db.VarChar(255)
+  message    Json
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reviews {
+  id         BigInt   @id @unique(map: "room_reviews_pkey") @default(autoincrement())
+  booking_id BigInt
+  user_id    Int
+  room_id    Int
+  rating     Int
+  comment    String?
+  created_at DateTime @default(dbgenerated("timezone('Asia/Kolkata'::text, now())")) @db.Timestamptz(6)
+  updated_at DateTime @default(dbgenerated("timezone('Asia/Kolkata'::text, now())")) @db.Timestamptz(6)
+  bookings   bookings @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_room_reviews_booking")
+  rooms      rooms    @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_room_reviews_room")
+  users      users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_room_reviews_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model room_offers {
+  offer_id         Int       @id @default(autoincrement())
+  room_id          Int
+  discount_percent Decimal   @db.Decimal(10, 2)
+  offer_price      Decimal?  @db.Decimal(10, 2)
+  start_date       DateTime? @db.Date
+  end_date         DateTime? @db.Date
+  is_active        Boolean?  @default(true)
+  created_at       DateTime  @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  updated_at       DateTime  @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  title            String?
+  rooms            rooms     @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_room")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model rooms {
+  room_id         Int           @id @default(autoincrement())
+  room_type       String
+  room_number     Int
+  rooms_available Int?
+  price           Decimal       @db.Decimal(10, 2)
+  description     String?
+  image_urls      String[]
+  total_rooms     Int?
+  booked_rooms    Int?
+  guests          Int?
+  created_at      DateTime      @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  updated_at      DateTime      @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  room_size       String?
+  room_name       String?
+  amenities       String[]
+  bookings        bookings[]
+  reviews         reviews[]
+  room_offers     room_offers[]
+
+  @@unique([room_type, room_number], map: "uq_room_type_number")
+}
+
+model users {
+  user_id         Int        @id @default(autoincrement())
+  name            String
+  email           String?
+  whatsapp_number Decimal    @db.Decimal(12, 0)
+  created_at      DateTime   @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  updated_at      DateTime   @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamptz(6)
+  bookings        bookings[]
+  emails          emails[]
+  payments        payments[]
+  reviews         reviews[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model whatsapp_messages {
+  id               BigInt    @id @default(autoincrement())
+  name             String?
+  fromnumber       String    @db.VarChar(20)
+  tonumber         String    @db.VarChar(20)
+  message          String
+  sender_type      String    @db.VarChar(10)
+  message_type     String?   @default("text") @db.VarChar(20)
+  message_category String    @default("chat") @db.VarChar(20)
+  created_at       DateTime? @default(dbgenerated("(now() AT TIME ZONE 'Asia/Kolkata'::text)")) @db.Timestamp(6)
+}
