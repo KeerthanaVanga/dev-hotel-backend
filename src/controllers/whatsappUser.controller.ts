@@ -38,7 +38,7 @@ export const fetchWhatsappUsers = async (_req: Request, res: Response) => {
 
 export const fetchWhatsappMessages = async (req: Request, res: Response) => {
   try {
-    const { phone } = req.params;
+    const phone = req.params.phone as string;
 
     const messages = await prisma.whatsapp_messages.findMany({
       where: {
