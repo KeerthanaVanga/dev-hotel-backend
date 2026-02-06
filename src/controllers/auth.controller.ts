@@ -302,7 +302,7 @@ export const listAdmins = async (req: AuthRequest, res: Response) => {
     });
 
     return res.status(200).json({
-      admins: admins.map((a) => ({
+      admins: admins.map((a: (typeof admins)[number]) => ({
         id: a.id,
         username: a.username,
         email: a.email,
@@ -373,7 +373,7 @@ export const updateAdmin = async (req: AuthRequest, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
     if (Number.isNaN(id)) {
       return res.status(400).json({ message: "Invalid admin ID" });
     }
@@ -435,7 +435,7 @@ export const deleteAdmin = async (req: AuthRequest, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
     if (Number.isNaN(id)) {
       return res.status(400).json({ message: "Invalid admin ID" });
     }
