@@ -1,5 +1,5 @@
 // server/services/offers.service.ts
-import { prisma } from "../db/prisma";
+import { prisma } from "../db/prisma.js";
 
 /** Get all offers */
 export const getAllOffers = async () => {

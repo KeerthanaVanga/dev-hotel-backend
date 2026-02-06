@@ -1,4 +1,4 @@
-import { prisma } from "../db/prisma";
+import { prisma } from "../db/prisma.js";
 import { startOfDay, endOfDay } from "date-fns";
 
 /** Format hour in UTC so we don't double-convert (DB stores UTC; avoid showing IST) */
