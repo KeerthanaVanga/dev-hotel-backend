@@ -9,6 +9,6 @@ const router = Router();
 // Admin-style endpoint
 router.use(requireAuth);
 router.get("/payment", fetchAllUsersPayments);
-router.patch("/payments/:id", updatePaymentHandler);
+router.patch("/payment/:id", updatePaymentHandler);
 
 export default router;
